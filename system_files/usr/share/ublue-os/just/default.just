@@ -46,14 +46,19 @@ enroll-secure-boot-key:
 # Toggle display of the user-motd in terminal
 toggle-user-motd:
     #!/usr/bin/bash
-    if test -e "${HOME}/.config/no-show-user-motd"; then
-      rm -f "${HOME}/.config/no-show-user-motd"
+    if [ -e "${HOME}/.config/no-show-user-motd" ] ; then
+      if gum confirm "Would you like to disable the MOTD?" ; then
+        rm -f "${HOME}/.config/no-show-user-motd"
+        echo "MOTD will not be shown anymore"
+        exit 0
+      fi
+    fi
+    if gum confirm "Would you like to enable the MOTD?" ; then
+      mkdir -p "${HOME}/.config"
+      touch "${HOME}/.config/no-show-user-motd"
       echo "MOTD will be shown now"
       exit 0
     fi
-    mkdir -p "${HOME}/.config"
-    touch "${HOME}/.config/no-show-user-motd"
-    echo "MOTD will not be shown anymore"
 
 # Check for local overrides
 check-local-overrides:
