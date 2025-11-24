@@ -36,9 +36,10 @@ logs-last-boot:
 enroll-secure-boot-key:
     #!/usr/bin/bash
     ENROLLMENT_PASSWORD="universalblue"
-    SECUREBOOT_KEY=/etc/pki/akmods/certs/akmods-ublue.der
-    sudo mokutil --timeout -1
-    echo -e "$ENROLLMENT_PASSWORD\n$ENROLLMENT_PASSWORD" | sudo mokutil --import "$SECUREBOOT_KEY"
+    sudo bash <<EOF
+    mokutil --timeout -1
+    echo -e "$ENROLLMENT_PASSWORD\n$ENROLLMENT_PASSWORD" | mokutil --import "/etc/pki/akmods/certs/akmods-ublue.der"
+    EOF
     echo 'At next reboot, the mokutil UEFI menu UI will be displayed (*QWERTY* keyboard input and navigation).\nThen, select "Enroll MOK", and input "universalblue" as the password'
 
 # Toggle display of the user-motd in terminal
@@ -46,12 +47,12 @@ toggle-user-motd:
     #!/usr/bin/bash
     if test -e "${HOME}/.config/no-show-user-motd"; then
       rm -f "${HOME}/.config/no-show-user-motd"
-    else
-      if test ! -d "${HOME}/.config"; then
-        mkdir "${HOME}/.config"
-      fi
-      touch "${HOME}/.config/no-show-user-motd"
+      echo "MOTD will be shown now"
+      exit 0
     fi
+    mkdir -p "${HOME}/.config"
+    touch "${HOME}/.config/no-show-user-motd"
+    echo "MOTD will not be shown anymore"
 
 # Check for local overrides
 check-local-overrides:
